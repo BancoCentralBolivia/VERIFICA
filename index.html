@@ -6,10 +6,34 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>Verificador BCB — Billetes Inválidos</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;600;700&display=swap"
-    rel="stylesheet" />
+  
+  <!-- METADATOS BÁSICOS Y SEO -->
+  <title>VERIFICADOR BILLETES BCB</title>
+  <meta name="description" content="Verificador Oficial de Billetes del Banco Central de Bolivia (BCB). Comprueba al instante billetes inválidos y sin valor legal de la Serie B." />
+  <meta name="keywords" content="VERIFICADOR BILLETES BCB, BCB, Banco Central de Bolivia, billetes inválidos, billetes falsos, serie B, verificador de billetes bolivia, CP9/2026" />
+  <meta name="author" content="MKS" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- ÍCONO DE LA PÁGINA -->
+  <link rel="icon" type="image/x-icon" href="images.ico" />
+  <link rel="apple-touch-icon" href="images.ico" />
+
+  <!-- METADATOS PARA REDES SOCIALES Y COMPARTIR (OPEN GRAPH / WHATSAPP / FACEBOOK) -->
+  <meta property="og:title" content="VERIFICADOR BILLETES BCB" />
+  <meta property="og:description" content="Verificador de billetes inválidos del Banco Central de Bolivia. Escanea o escribe la serie para verificar." />
+  <meta property="og:image" content="miniatura.jpg" />
+  <meta property="og:url" content="https://tu-dominio.com" />
+  <meta property="og:type" content="website" />
+
+  <!-- METADATOS PARA TWITTER -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="VERIFICADOR BILLETES BCB" />
+  <meta name="twitter:description" content="Verificador de billetes inválidos del Banco Central de Bolivia." />
+  <meta name="twitter:image" content="miniatura.jpg" />
+
+  <!-- FUENTES -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  
   <style>
     *,
     *::before,
@@ -28,7 +52,7 @@
       --teal-b: #0F4A5C;
       --g: #2ECC71;
       --r: #E74C3C;
-      --y: #F39C12; /* Color de advertencia para NO EXISTE */
+      --y: #F39C12;
     }
 
     html,
@@ -334,6 +358,7 @@
       display: none;
       margin-top: 4px;
       margin-bottom: 8px;
+      padding: 0 10px;
     }
 
     .sstatus.show {
@@ -525,7 +550,7 @@
   <!-- MAIN -->
   <main>
     <div>
-      <div class="mtitle">Verificador de Billetes Inválidos</div>
+      <h2 class="mtitle">Verificador de Billetes Inválidos</h2>
       <div class="divider"></div>
     </div>
 
@@ -583,10 +608,10 @@
     // ═══════════════════════════════════════════════════════════
     //  API KEY GEMINI
     // ═══════════════════════════════════════════════════════════
-    // NOTA IMPORTANTE: En este entorno de previsualización esta variable debe estar en "" (vacía) 
-    // porque la clave se inyecta por detrás de forma segura.
-    // 
-    // SI LO VAS A SUBIR A TU PROPIO SERVIDOR, pon tu clave entre las comillas así:
+    // NOTA PARA EL DESARROLLADOR:
+    // Si descargas este archivo a tu PC o lo subes a tu hosting web, la cámara 
+    // te dará ERROR DE CONEXIÓN si la clave está vacía. 
+    // Para que funcione fuera de esta vista de prueba, pega tu clave abajo:
     // const apiKey = "AIzaSyA_2zocK4uK2BqTy7JGvUDRolfbEiGNhwE";
     const apiKey = ""; 
 
@@ -720,7 +745,6 @@
     
     function hideScan() { document.getElementById('scanStatus').classList.remove('show') }
 
-    // Función optimizada para comprimir: mucho más rápida (640px) y liviana (calidad 0.7)
     function compressImage(file, maxWidth = 640, maxHeight = 640, quality = 0.7) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -741,7 +765,6 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            // El formato 'image/jpeg' y calidad de 0.7 reducen drásticamente el peso
             const dataUrl = canvas.toDataURL('image/jpeg', quality);
             resolve(dataUrl.split(',')[1]); 
           };
@@ -758,7 +781,8 @@
           const res = await fetch(url, options);
           if (!res.ok) {
             const e = await res.json().catch(() => ({}));
-            throw new Error(e?.error?.message || `HTTP ${res.status}`);
+            const errMsg = e?.error?.message || `HTTP ${res.status}`;
+            throw new Error(errMsg);
           }
           return await res.json();
         } catch (err) {
@@ -775,23 +799,19 @@
       try {
         showScan('⚙️ Preparando imagen...');
         
-        // Comprimimos al máximo permitido sin perder legibilidad
+        // Comprimimos al máximo
         const b64 = await compressImage(file, 640, 640, 0.7);
         const mime = 'image/jpeg';
         
         showScan('🤖 Analizando billete de forma rápida...');
         
-        // URL de la API: 
-        // NOTA: Si lo subes a tu propio servidor con tu API Key, cambia el modelo 
-        // a "gemini-1.5-flash-8b" (que es el modelo más rápido y gratuito de producción).
-        // En este entorno especial usamos el modelo de "preview".
+        // URL de la API
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
         
         const payload = {
           contents: [{
             role: "user",
             parts: [
-              // Prompt optimizado y más directo para evitar que la IA hable demás
               { text: "Encuentra el número de serie de este billete. Es una secuencia de entre 8 y 9 números. Responde ÚNICAMENTE con los números, nada más. Sin espacios, sin letras, sin guiones." },
               { inlineData: { mimeType: mime, data: b64 } }
             ]
@@ -804,15 +824,13 @@
           body: JSON.stringify(payload)
         });
 
-        // Limpiamos totalmente la respuesta, quitando espacios o guiones accidentalmente añadidos por la IA
+        // Limpieza del texto recibido
         const txt = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
         const cleanTxt = txt.replace(/\s|-/g, ''); 
-        
-        // Extraemos solo grupos de 8 a 9 números.
         const m = cleanTxt.match(/\d{8,9}/);
         
         if (!m) { 
-          showScan('❌ No se encontró la serie. Acerca la cámara al número y asegúrate de que haya buena luz.', true); 
+          showScan('❌ No se encontró la serie. Acerca la cámara al número y evita los reflejos.', true); 
           return; 
         }
         
@@ -821,13 +839,20 @@
         updateCounter();
         showScan(`✅ Serie detectada: ${serial}`);
         
-        // Ejecutar comprobación automáticamente
         setTimeout(() => { comprobar(); hideScan() }, 800);
+
       } catch (e) {
-        showScan('❌ Hubo un error de conexión al analizar la imagen.', true);
-        console.error(e);
+        console.error("Detalle del error:", e);
+        
+        // Manejo de errores mejorado para avisarte si es culpa de la API key
+        if (e.message.includes('API key') || e.message.includes('400') || e.message.includes('403')) {
+          showScan('❌ Error: Falta la API Key. Por favor, revisa el código fuente y pon tu clave.', true);
+        } else if (e.message.includes('Failed to fetch')) {
+          showScan('❌ Error de conexión a internet. Revisa tus datos o Wi-Fi.', true);
+        } else {
+          showScan('❌ Hubo un error de conexión al analizar la imagen.', true);
+        }
       } finally {
-        // Limpiamos el input file para permitir escanear de nuevo sin fallos
         document.getElementById('cameraInput').value = '';
       }
     }
