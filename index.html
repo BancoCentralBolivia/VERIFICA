@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -28,6 +28,7 @@
       --teal-b: #0F4A5C;
       --g: #2ECC71;
       --r: #E74C3C;
+      --y: #F39C12; /* Color de advertencia para NO EXISTE */
     }
 
     html,
@@ -351,8 +352,8 @@
     }
 
     .rbox.visible {
-      max-height: 300px;
-      padding: 12px 14px;
+      max-height: 600px;
+      padding: 16px 14px;
       opacity: 1
     }
 
@@ -368,20 +369,27 @@
       box-shadow: 0 0 28px rgba(192, 57, 43, .09)
     }
 
+    /* Nueva clase para cuando un billete NO EXISTE */
+    .rbox.warn {
+      background: linear-gradient(135deg, rgba(243, 156, 18, .14), rgba(243, 156, 18, .04));
+      border: 1.5px solid rgba(243, 156, 18, .38);
+      box-shadow: 0 0 28px rgba(243, 156, 18, .09)
+    }
+
     .rsub {
       text-align: center;
-      font-size: .78rem;
-      color: rgba(255, 255, 255, .55);
+      font-size: .85rem;
+      color: rgba(255, 255, 255, .7);
       display: block;
-      margin-bottom: 8px;
-      animation: fsu .45s ease forwards
+      margin-bottom: 12px;
+      animation: fsu .45s ease forwards;
     }
 
     /* per-denom rows */
     .rdetail {
       display: none;
       flex-direction: column;
-      gap: 7px;
+      gap: 10px;
       animation: fsu .5s ease forwards
     }
 
@@ -393,15 +401,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255, 255, 255, .04);
-      border-radius: 9px;
-      padding: 9px 13px;
-      border: 1px solid rgba(255, 255, 255, .07)
+      background: rgba(255, 255, 255, .06);
+      border-radius: 12px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, .1)
     }
 
     .drname {
       font-family: 'Cinzel', serif;
-      font-size: .85rem;
+      font-size: 1.2rem;
       font-weight: 700;
       letter-spacing: .09em;
       color: var(--gold-l)
@@ -411,10 +419,10 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 5px 12px;
+      padding: 8px 14px;
       border-radius: 999px;
       font-family: 'Cinzel', serif;
-      font-size: .67rem;
+      font-size: 0.95rem;
       font-weight: 700;
       letter-spacing: .07em
     }
@@ -429,6 +437,13 @@
       background: rgba(192, 57, 43, .18);
       border: 1.5px solid rgba(192, 57, 43, .5);
       color: var(--r)
+    }
+
+    /* Insignia para NO EXISTE */
+    .dbadge.warn {
+      background: rgba(243, 156, 18, .18);
+      border: 1.5px solid rgba(243, 156, 18, .5);
+      color: var(--y)
     }
 
     @keyframes fsu {
@@ -579,20 +594,28 @@
 
   <script>
     // ═══════════════════════════════════════════════════════════
-    //  API KEY GEMINI — Configurada por el creador de la app
-    //  Modelo: gemini-2.0-flash (gratuito)
+    //  API KEY GEMINI — Configurada por el entorno 
     // ═══════════════════════════════════════════════════════════
-    const GEMINI_API_KEY = 'AIzaSyCGomolcYfLqDdTcXV8bhh0Fjhtw-5y1eE';
+    const apiKey = ""; 
 
     // ═══════════════════════════════════════════════════════════
-    //  SERIES INVÁLIDAS — CP9/2026 — Banco Central de Bolivia
+    //  SERIES INVÁLIDAS Y LÍMITES DE IMPRESIÓN — CP9/2026
     // ═══════════════════════════════════════════════════════════
+
+    // Máximos números de serie impresos por el BCB a la fecha para cada corte
+    const MAX_PRINTED_SERIALS = {
+      Bs10: 109850000,
+      Bs20: 120950000,
+      Bs50: 92250000
+    };
+
+    // Rangos declarados formalmente como inválidos/sin valor
     const INVALID_RANGES = {
       Bs50: [
         [67250001, 67700000], [69050001, 69500000], [69500001, 69950000],
         [69950001, 70400000], [70400001, 70850000], [70850001, 71300000],
         [76310012, 85139995], [86400001, 86850000], [90900001, 91350000],
-        [91800001, 92250000],
+        [91800001, 92250000]
       ],
       Bs20: [
         [87280145, 91646549], [96650001, 97100000], [99800001, 100250000],
@@ -600,13 +623,13 @@
         [111050001, 111500000], [111950001, 112400000], [112400001, 112850000],
         [112850001, 113300000], [114200001, 114650000], [114650001, 115100000],
         [115100001, 115550000], [118700001, 119150000], [119150001, 119600000],
-        [120500001, 120950000],
+        [120500001, 120950000]
       ],
       Bs10: [
         [77100001, 77550000], [78000001, 78450000], [78900001, 96350000],
         [96350001, 96800000], [96800001, 97250000], [98150001, 98600000],
         [104900001, 105350000], [105350001, 105800000], [106700001, 107150000],
-        [107600001, 108050000], [108050001, 108500000], [109400001, 109850000],
+        [107600001, 108050000], [108050001, 108500000], [109400001, 109850000]
       ],
     };
 
@@ -627,17 +650,25 @@
 
     function hideResult() {
       const b = document.getElementById('resultBox');
-      b.classList.remove('visible', 'valid', 'invalid');
+      b.classList.remove('visible', 'valid', 'invalid', 'warn');
     }
 
     function normalizeSerial(r) { return r.length === 8 ? '0' + r : r }
 
-    function isInvalid(s9, denom) {
+    // Función principal para verificar el estado de una serie específica
+    function checkStatus(s9, denom) {
       const n = parseInt(s9, 10);
-      const ranges = denom === 'TODOS'
-        ? [...INVALID_RANGES.Bs10, ...INVALID_RANGES.Bs20, ...INVALID_RANGES.Bs50]
-        : INVALID_RANGES[denom] || [];
-      return ranges.some(([f, t]) => n >= f && n <= t);
+
+      // Si supera el límite impreso a la fecha, NO EXISTE
+      if (n > MAX_PRINTED_SERIALS[denom]) {
+        return 'NOT_EXIST';
+      }
+
+      // De lo contrario verificamos si está en los rangos inválidos
+      const ranges = INVALID_RANGES[denom] || [];
+      const isInv = ranges.some(([f, t]) => n >= f && n <= t);
+      
+      return isInv ? 'INVALID' : 'VALID';
     }
 
     function comprobar() {
@@ -647,7 +678,7 @@
       const detail = document.getElementById('resultDetail');
 
       if (!raw || !/^\d{8,9}$/.test(raw)) {
-        box.classList.remove('valid');
+        box.classList.remove('valid', 'warn');
         box.classList.add('visible', 'invalid');
         sub.textContent = '⚠️ Ingresa entre 8 y 9 dígitos numéricos.';
         detail.classList.remove('show'); detail.innerHTML = '';
@@ -655,37 +686,54 @@
       }
 
       const s9 = normalizeSerial(raw);
-      box.classList.remove('visible', 'valid', 'invalid');
+      box.classList.remove('visible', 'valid', 'invalid', 'warn');
       void box.offsetWidth;
 
-      if (selectedDenom === 'TODOS') {
-        const denoms = [{ key: 'Bs10', label: 'Bs 10' }, { key: 'Bs20', label: 'Bs 20' }, { key: 'Bs50', label: 'Bs 50' }];
-        const anyInv = denoms.some(d => isInvalid(s9, d.key));
-        box.classList.add('visible', anyInv ? 'invalid' : 'valid');
-        sub.textContent = `Serie ${s9} — Revisado en todas las denominaciones (CP9/2026):`;
-        detail.innerHTML = denoms.map(d => {
-          const inv = isInvalid(s9, d.key);
-          return `<div class="drow">
-          <span class="drname">${d.label}</span>
-          <span class="dbadge ${inv ? 'bad' : 'ok'}">${inv ? '🚫 INVÁLIDO' : '✅ VÁLIDO'}</span>
-        </div>`;
-        }).join('');
-        detail.classList.add('show');
-      } else {
-        detail.classList.remove('show'); detail.innerHTML = '';
-        const inv = isInvalid(s9, selectedDenom);
-        box.classList.add('visible', inv ? 'invalid' : 'valid');
-        sub.textContent = `Serie ${s9} (${selectedDenom}) — ${inv ? 'No tiene valor legal según CP9/2026.' : 'Tiene pleno valor legal.'}`;
+      let denomsToCheck = selectedDenom === 'TODOS' 
+        ? [{ key: 'Bs10', label: 'Bs 10' }, { key: 'Bs20', label: 'Bs 20' }, { key: 'Bs50', label: 'Bs 50' }]
+        : [{ key: selectedDenom, label: selectedDenom.replace('Bs', 'Bs ') }];
+
+      // Evaluamos el estado global del contenedor (caja externa)
+      let boxStatus = 'valid';
+      if (denomsToCheck.some(d => checkStatus(s9, d.key) === 'INVALID')) {
+        boxStatus = 'invalid'; // Prioridad para mostrar que al menos uno es Inválido
+      } else if (denomsToCheck.some(d => checkStatus(s9, d.key) === 'NOT_EXIST')) {
+        boxStatus = 'warn';    // Si no es inválido pero alguno No Existe
       }
+
+      box.classList.add('visible', boxStatus);
+      sub.textContent = selectedDenom === 'TODOS' 
+        ? `Serie ${s9} — Revisado en todas las denominaciones (CP9/2026):`
+        : `Serie ${s9} — Revisión para ${selectedDenom.replace('Bs', 'Bs ')}:`;
+
+      // Detalle de resultados para cada denominación
+      detail.innerHTML = denomsToCheck.map(d => {
+        const status = checkStatus(s9, d.key);
+        let badgeClass, badgeText;
+
+        if (status === 'NOT_EXIST') {
+          badgeClass = 'warn';
+          badgeText = '❓ NO EXISTE';
+        } else if (status === 'INVALID') {
+          badgeClass = 'bad';
+          badgeText = '🚫 INVÁLIDO';
+        } else {
+          badgeClass = 'ok';
+          badgeText = '✅ VÁLIDO';
+        }
+
+        return `<div class="drow">
+          <span class="drname">${d.label}</span>
+          <span class="dbadge ${badgeClass}">${badgeText}</span>
+        </div>`;
+      }).join('');
+      
+      detail.classList.add('show');
       box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    /* ── CÁMARA + GEMINI OCR ────────────────────────── */
+    /* ── CÁMARA + GEMINI OCR CON RETRY AUTOMÁTICO ────────────────────────── */
     function triggerCamera() {
-      if (!GEMINI_API_KEY || GEMINI_API_KEY.includes('AQUI_VA')) {
-        showScan('⚠️ API Key no configurada. Contacta al administrador.', true);
-        return;
-      }
       document.getElementById('cameraInput').click();
     }
 
@@ -695,42 +743,69 @@
       el.style.color = err ? '#E74C3C' : 'var(--gold-l)';
       el.classList.add('show');
     }
+    
     function hideScan() { document.getElementById('scanStatus').classList.remove('show') }
+
+    async function fetchWithRetry(url, options, retries = 5) {
+      const delays = [1000, 2000, 4000, 8000, 16000];
+      for (let i = 0; i < retries; i++) {
+        try {
+          const res = await fetch(url, options);
+          if (!res.ok) {
+            const e = await res.json().catch(() => ({}));
+            throw new Error(e?.error?.message || `HTTP ${res.status}`);
+          }
+          return await res.json();
+        } catch (err) {
+          if (i === retries - 1) throw err;
+          await new Promise(r => setTimeout(r, delays[i]));
+        }
+      }
+    }
 
     async function handleCameraImage(event) {
       const file = event.target.files[0];
       if (!file) return;
-      showScan('⏳ Analizando con Gemini Flash…');
+      showScan('⏳ Analizando serie con IA...');
+      
       try {
         const b64 = await toBase64(file);
         const mime = file.type || 'image/jpeg';
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{
-                parts: [
-                  { inline_data: { mime_type: mime, data: b64 } },
-                  { text: `Encuentra el NÚMERO DE SERIE del billete boliviano en la imagen. Tiene exactamente 9 dígitos (puede empezar con 0, ej: 077100001). Si ves 8 dígitos, agrega un 0 al inicio. Responde ÚNICAMENTE los 9 dígitos, sin nada más.` }
-                ]
-              }],
-              generationConfig: { temperature: 0, maxOutputTokens: 15 }
-            })
-          }
-        );
-        if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e?.error?.message || `HTTP ${res.status}`) }
-        const data = await res.json();
+        
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        
+        const payload = {
+          contents: [{
+            role: "user",
+            parts: [
+              { text: "Encuentra el NÚMERO DE SERIE del billete boliviano en la imagen. Tiene exactamente 9 dígitos (puede empezar con 0, ej: 077100001). Si ves 8 dígitos, agrega un 0 al inicio. Responde ÚNICAMENTE los 9 dígitos, sin nada más." },
+              { inlineData: { mimeType: mime, data: b64 } }
+            ]
+          }]
+        };
+
+        const data = await fetchWithRetry(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
         const txt = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
         const m = txt.match(/\d{8,9}/);
-        if (!m) { showScan('❌ No se detectó la serie. Acércate más y asegura buena luz.', true); return }
+        
+        if (!m) { 
+          showScan('❌ No se detectó la serie. Acércate más y asegura buena luz.', true); 
+          return; 
+        }
+        
         const serial = m[0].length === 8 ? '0' + m[0] : m[0];
         document.getElementById('serialInput').value = serial;
         document.getElementById('digitCount').textContent = serial.length + ' / 9';
         showScan(`✅ Serie detectada: ${serial}`);
+        
         setTimeout(() => { comprobar(); hideScan() }, 700);
       } catch (e) {
-        showScan('❌ ' + e.message, true);
+        showScan('❌ Error de conexión o IA: ' + e.message, true);
       } finally {
         document.getElementById('cameraInput').value = '';
       }
