@@ -7,33 +7,14 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Verificador BCB — Billetes Inválidos</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;600;700&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
 
     :root {
-      --gold: #C9A840;
-      --gold-l: #E8C96A;
-      --gold-d: #9C7D22;
-      --teal: #071E25;
-      --teal-m: #0D3D4A;
-      --teal-b: #0F4A5C;
-      --g: #2ECC71;
-      --r: #E74C3C;
-      --y: #F39C12; /* Color de advertencia para NO EXISTE */
-    }
-
-    html,
-    body {
-      min-height: 100vh; /* Permite que crezca más allá del 100% si es necesario */
+      --gold: #C9A840; --gold-l: #E8C96A; --gold-d: #9C7D22;
+      --teal: #071E25; --teal-m: #0D3D4A; --teal-b: #0F4A5C;
+      --g: #2ECC71; --r: #E74C3C; --y: #F39C12;
     }
 
     body {
@@ -43,588 +24,254 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-x: hidden;
-      overflow-y: auto; /* Permite scroll vertical en celulares */
+      justify-content: center;
+      height: 100vh;
+      height: 100dvh; /* Soporte para altura dinámica en móviles */
+      overflow: hidden; /* Evita el scroll */
+      padding: 8px;
     }
 
-    /* radial glows */
+    /* Glows de fondo */
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: -1;
       background:
         radial-gradient(ellipse 90% 50% at 15% 5%, rgba(201, 168, 64, .08) 0%, transparent 60%),
         radial-gradient(ellipse 70% 70% at 85% 95%, rgba(46, 143, 163, .12) 0%, transparent 60%);
-      z-index: -1;
     }
 
-    /* ── HEADER ── */
-    header {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      padding: 10px 16px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: rgba(7, 30, 37, .95);
-      border-bottom: 1px solid rgba(201, 168, 64, .22);
-      backdrop-filter: blur(12px);
-    }
-
-    .hlogo {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(201, 168, 64, .5);
-      object-fit: cover;
-      box-shadow: 0 0 12px rgba(201, 168, 64, .3);
-      flex-shrink: 0
-    }
-
-    .htxt h1 {
-      font-family: 'Cinzel', serif;
-      font-size: .88rem;
-      font-weight: 700;
-      letter-spacing: .07em;
-      background: linear-gradient(135deg, var(--gold-l), var(--gold), var(--gold-d));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text
-    }
-
-    .htxt p {
-      font-size: .58rem;
-      color: rgba(255, 255, 255, .4);
-      letter-spacing: .09em;
-      text-transform: uppercase;
-      margin-top: 2px
-    }
-
-    /* ── MAIN ── */
     main {
-      position: relative;
-      z-index: 10;
-      flex: 1;
+      width: 100%;
+      max-width: 480px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 600px;
-      padding: 10px 12px 20px; /* Un poco más de padding abajo */
       gap: 8px;
     }
 
-    /* ── MINI TITLE ── */
-    .mtitle {
-      text-align: center;
-      font-family: 'Cinzel', serif;
-      font-size: clamp(.9rem, 4vw, 1.15rem);
-      font-weight: 600;
-      letter-spacing: .05em;
-      background: linear-gradient(135deg, var(--gold-l), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .divider {
-      width: 40px;
-      height: 1.5px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 2px auto 0;
-      border-radius: 2px
-    }
-
-    /* ── CARD ── */
+    /* ── CARD PRINCIPAL ── */
     .card {
-      width: 100%;
       background: linear-gradient(145deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02));
       border: 1px solid rgba(201, 168, 64, .2);
-      border-radius: 18px;
-      padding: 14px 14px 12px;
+      border-radius: 16px;
+      padding: 12px;
       backdrop-filter: blur(20px);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(201, 168, 64, .14);
-    }
-
-    /* denomination */
-    .dlabel {
-      font-size: .6rem;
-      font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 6px;
-      display: block
-    }
-
-    .dgroup {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(201, 168, 64, .14);
       display: flex;
-      gap: 6px;
-      margin-bottom: 12px
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .dbtn {
-      flex: 1;
-      padding: 8px 4px;
-      border: 1.5px solid rgba(201, 168, 64, .28);
-      border-radius: 10px;
-      background: transparent;
-      color: rgba(255, 255, 255, .55);
-      font-family: 'Inter', sans-serif;
-      font-size: .78rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .2s;
-      -webkit-tap-highlight-color: transparent;
-      letter-spacing: .03em;
-    }
-
-    .dbtn:active {
-      transform: scale(.96)
-    }
-
-    .dbtn.active {
-      border-color: var(--gold);
-      background: linear-gradient(135deg, rgba(201, 168, 64, .18), rgba(201, 168, 64, .07));
-      color: var(--gold-l);
-      box-shadow: 0 0 12px rgba(201, 168, 64, .15)
-    }
-
-    /* input */
-    .ilabel {
-      font-size: .6rem;
-      font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 6px;
-      display: block
-    }
-
-    .iwrap {
-      position: relative;
-      margin-bottom: 8px
-    }
-
-    .sinput {
-      width: 100%;
-      padding: 13px 16px;
-      font-family: 'Inter', sans-serif;
-      font-size: clamp(1.2rem, 6vw, 1.7rem);
-      font-weight: 300;
-      letter-spacing: .2em;
-      text-align: center;
-      background: rgba(0, 0, 0, .3);
-      border: 1.5px solid rgba(201, 168, 64, .25);
-      border-radius: 12px;
-      color: #fff;
-      outline: none;
-      transition: all .25s;
-      caret-color: var(--gold);
-    }
-
-    .sinput::placeholder {
-      color: rgba(255, 255, 255, .18);
-      font-size: clamp(.85rem, 3.5vw, 1.2rem);
-      letter-spacing: .07em
-    }
-
-    .sinput:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201, 168, 64, .1)
-    }
-
-    .dcnt {
-      position: absolute;
-      right: 12px;
-      bottom: -17px;
-      font-size: .63rem;
-      color: rgba(255, 255, 255, .26)
-    }
-
-    /* scan row */
-    .srow {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-      margin-bottom: 10px
-    }
-
-    .bscan {
-      flex: 1;
-      padding: 10px 8px;
+    /* Header integrado */
+    .chead {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      border: 1.5px solid rgba(201, 168, 64, .35);
-      border-radius: 12px;
-      background: rgba(201, 168, 64, .07);
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(201, 168, 64, .15);
+    }
+    .chead img {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 168, 64, .5);
+    }
+    .chead div {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
       color: var(--gold-l);
-      font-family: 'Inter', sans-serif;
-      font-size: .8rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* Controles */
+    .label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .dgroup { display: flex; gap: 4px; }
+    .dbtn {
+      flex: 1; padding: 6px 2px;
+      border: 1px solid rgba(201, 168, 64, .28);
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(255, 255, 255, .6);
+      font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .dbtn.active {
+      border-color: var(--gold);
+      background: rgba(201, 168, 64, .15);
+      color: var(--gold-l);
+    }
+
+    .iwrap { position: relative; }
+    .sinput {
+      width: 100%;
+      padding: 10px;
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-align: center;
+      background: rgba(0, 0, 0, .3);
+      border: 1px solid rgba(201, 168, 64, .25);
+      border-radius: 10px;
+      color: #fff; outline: none;
+    }
+    .sinput::placeholder { color: rgba(255, 255, 255, .15); font-size: 1rem; }
+    .sinput:focus { border-color: var(--gold); }
+    .dcnt {
+      position: absolute; right: 10px; bottom: -14px;
+      font-size: 0.55rem; color: rgba(255, 255, 255, .3);
+    }
+
+    /* Botones combinados */
+    .actions { display: flex; gap: 6px; margin-top: 4px; }
+    .bscan, .bcheck {
+      border-radius: 10px;
       font-weight: 600;
       cursor: pointer;
-      transition: all .2s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .bscan:active {
-      transform: scale(.97);
-      background: rgba(201, 168, 64, .14)
-    }
-
-    #cameraInput {
-      display: none
-    }
-
-    /* comprobar */
-    .bcheck {
-      width: 100%;
-      padding: 14px;
-      font-family: 'Cinzel', serif;
-      font-size: clamp(.9rem, 4vw, 1.05rem);
-      font-weight: 700;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: var(--teal);
-      background: linear-gradient(135deg, var(--gold-l), var(--gold), var(--gold-d));
       border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: all .25s;
-      box-shadow: 0 6px 22px rgba(201, 168, 64, .35), inset 0 1px 0 rgba(255, 255, 255, .3);
-      -webkit-tap-highlight-color: transparent;
+      transition: all .2s;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .bcheck::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255, 255, 255, .25), transparent);
-      opacity: 0;
-      transition: opacity .25s
-    }
-
-    .bcheck:hover::before {
-      opacity: 1
-    }
-
-    .bcheck:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 28px rgba(201, 168, 64, .48)
-    }
-
-    .bcheck:active {
-      transform: scale(.98)
-    }
-
-    /* scan status */
-    .sstatus {
-      text-align: center;
-      font-size: .73rem;
+    .bscan {
+      flex: 0 0 45px;
+      background: rgba(201, 168, 64, .1);
+      border: 1px solid rgba(201, 168, 64, .3);
       color: var(--gold-l);
-      min-height: 16px;
-      letter-spacing: .02em;
-      display: none;
-      margin-top: 4px;
-      margin-bottom: 8px;
+      font-size: 1.1rem;
     }
-
-    .sstatus.show {
-      display: block
+    .bcheck {
+      flex: 1;
+      padding: 10px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, var(--gold-l), var(--gold), var(--gold-d));
+      color: var(--teal);
+      box-shadow: 0 4px 15px rgba(201, 168, 64, .3);
     }
+    .bscan:active, .bcheck:active { transform: scale(0.96); }
+    #cameraInput { display: none; }
 
-    /* ── RESULT ── */
+    .sstatus {
+      text-align: center; font-size: 0.65rem; color: var(--gold-l);
+      margin-top: -2px; min-height: 12px; display: none;
+    }
+    .sstatus.show { display: block; }
+
+    /* ── RESULTADOS ── */
     .rbox {
-      width: 100%;
-      border-radius: 14px;
-      padding: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .45s cubic-bezier(.4, 0, .2, 1), padding .35s ease, opacity .35s ease;
-      opacity: 0;
+      width: 100%; border-radius: 12px;
+      max-height: 0; overflow: hidden; opacity: 0;
+      transition: all .3s ease;
     }
-
-    .rbox.visible {
-      max-height: 1000px; /* Suficientemente grande para que entren los 3 billetes */
-      padding: 16px 14px;
-      opacity: 1
-    }
-
-    .rbox.valid {
-      background: linear-gradient(135deg, rgba(39, 174, 96, .13), rgba(39, 174, 96, .04));
-      border: 1.5px solid rgba(39, 174, 96, .38);
-      box-shadow: 0 0 28px rgba(39, 174, 96, .09)
-    }
-
-    .rbox.invalid {
-      background: linear-gradient(135deg, rgba(192, 57, 43, .14), rgba(192, 57, 43, .04));
-      border: 1.5px solid rgba(192, 57, 43, .38);
-      box-shadow: 0 0 28px rgba(192, 57, 43, .09)
-    }
-
-    /* Clase para cuando un billete NO EXISTE */
-    .rbox.warn {
-      background: linear-gradient(135deg, rgba(243, 156, 18, .14), rgba(243, 156, 18, .04));
-      border: 1.5px solid rgba(243, 156, 18, .38);
-      box-shadow: 0 0 28px rgba(243, 156, 18, .09)
-    }
+    .rbox.visible { max-height: 400px; padding: 10px; opacity: 1; }
+    .rbox.valid { background: rgba(39, 174, 96, .1); border: 1px solid rgba(39, 174, 96, .3); }
+    .rbox.invalid { background: rgba(192, 57, 43, .1); border: 1px solid rgba(192, 57, 43, .3); }
+    .rbox.warn { background: rgba(243, 156, 18, .1); border: 1px solid rgba(243, 156, 18, .3); }
 
     .rsub {
-      text-align: center;
-      font-size: .85rem;
-      color: rgba(255, 255, 255, .7);
-      display: block;
-      margin-bottom: 12px;
-      animation: fsu .45s ease forwards;
+      text-align: center; font-size: 0.7rem; color: rgba(255, 255, 255, .7);
+      display: block; margin-bottom: 8px;
     }
 
-    /* per-denom rows */
-    .rdetail {
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      animation: fsu .5s ease forwards
-    }
-
-    .rdetail.show {
-      display: flex
-    }
+    .rdetail { display: none; flex-direction: column; gap: 6px; }
+    .rdetail.show { display: flex; }
 
     .drow {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255, 255, 255, .06);
-      border-radius: 12px;
-      padding: 14px 16px;
-      border: 1px solid rgba(255, 255, 255, .1)
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255, 255, 255, .05); border-radius: 8px;
+      padding: 8px 10px; border: 1px solid rgba(255, 255, 255, .08);
     }
-
-    .drname {
-      font-family: 'Cinzel', serif;
-      font-size: 1.2rem;
-      font-weight: 700;
-      letter-spacing: .09em;
-      color: var(--gold-l)
-    }
-
+    .drname { font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 700; color: var(--gold-l); }
     .dbadge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: .07em
+      padding: 4px 10px; border-radius: 99px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em;
     }
+    .dbadge.ok { background: rgba(39, 174, 96, .2); color: var(--g); border: 1px solid var(--g); }
+    .dbadge.bad { background: rgba(192, 57, 43, .2); color: var(--r); border: 1px solid var(--r); }
+    .dbadge.warn { background: rgba(243, 156, 18, .2); color: var(--y); border: 1px solid var(--y); }
 
-    .dbadge.ok {
-      background: rgba(39, 174, 96, .16);
-      border: 1.5px solid rgba(39, 174, 96, .45);
-      color: var(--g)
-    }
-
-    .dbadge.bad {
-      background: rgba(192, 57, 43, .18);
-      border: 1.5px solid rgba(192, 57, 43, .5);
-      color: var(--r)
-    }
-
-    .dbadge.warn {
-      background: rgba(243, 156, 18, .18);
-      border: 1.5px solid rgba(243, 156, 18, .5);
-      color: var(--y)
-    }
-
-    @keyframes fsu {
-      from {
-        opacity: 0;
-        transform: translateY(8px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    /* ── INFO STRIP ── */
+    /* ── INFO Y FOOTER ── */
     .istrip {
-      width: 100%;
-      padding: 7px 14px;
-      background: rgba(201, 168, 64, .05);
-      border: 1px solid rgba(201, 168, 64, .12);
-      border-radius: 10px;
-      font-size: .66rem;
-      color: rgba(255, 255, 255, .38);
-      line-height: 1.5;
-      text-align: center
+      padding: 6px; text-align: center;
+      font-size: 0.6rem; color: rgba(255, 255, 255, .4);
     }
-
-    .istrip strong {
-      color: var(--gold)
-    }
-
-    /* ── FOOTER MINIMIZADO ── */
     footer {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      padding: 6px 10px; /* Más pequeño */
-      border-top: 1px solid rgba(201, 168, 64, .12);
-      background: rgba(7, 30, 37, .8);
-      backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px; /* Menor espacio */
-      margin-top: auto; /* Empuja el footer al fondo de la pantalla */
+      position: absolute; bottom: 8px; width: 100%;
+      text-align: center; display: flex; flex-direction: column; gap: 2px;
     }
-
     .fbrand {
-      font-family: 'Cinzel', serif;
-      font-size: 0.85rem; /* Más pequeño */
-      font-weight: 700;
-      letter-spacing: .32em;
-      background: linear-gradient(135deg, var(--gold-l), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-family: 'Cinzel', serif; font-size: 0.75rem; font-weight: 700; color: var(--gold);
       text-decoration: none;
-      cursor: pointer;
     }
-
-    .ftext {
-      font-size: .55rem; /* Más pequeño */
-      color: rgba(255, 255, 255, .25);
-      letter-spacing: .05em;
-      text-align: center
-    }
-
-    .fref {
-      font-size: .5rem; /* Más pequeño */
-      color: rgba(255, 255, 255, .16);
-      text-align: center
-    }
+    .ftext { font-size: 0.5rem; color: rgba(255, 255, 255, .2); }
   </style>
 </head>
 
 <body>
-
-  <!-- HEADER -->
-  <header>
-    <img class="hlogo"
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Banco_Central_de_Bolivia.svg/200px-Banco_Central_de_Bolivia.svg.png"
-      alt="BCB" onerror="this.style.display='none'" />
-    <div class="htxt">
-      <h1>Banco Central de Bolivia</h1>
-      <p>Verificador de Billetes · Serie B · CP9/2026</p>
-    </div>
-  </header>
-
-  <!-- MAIN -->
   <main>
-    <div>
-      <div class="mtitle">Verificador de Billetes Inválidos</div>
-      <div class="divider"></div>
-    </div>
-
     <div class="card">
-      <!-- Denominación -->
-      <span class="dlabel">Denominación (por defecto verifica en todas)</span>
-      <div class="dgroup" role="group">
-        <button class="dbtn" id="btn-bs10" onclick="selectDenom('Bs10')">Bs 10</button>
-        <button class="dbtn" id="btn-bs20" onclick="selectDenom('Bs20')">Bs 20</button>
-        <button class="dbtn" id="btn-bs50" onclick="selectDenom('Bs50')">Bs 50</button>
-        <button class="dbtn active" id="btn-todos" onclick="selectDenom('TODOS')">Todas ★</button>
+      <div class="chead">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Banco_Central_de_Bolivia.svg/200px-Banco_Central_de_Bolivia.svg.png" alt="BCB" onerror="this.style.display='none'">
+        <div>Verificador BCB • CP9/2026</div>
       </div>
 
-      <!-- Input -->
-      <span class="ilabel">Número de serie (8 ó 9 dígitos)</span>
-      <div class="iwrap">
-        <input type="text" id="serialInput" class="sinput" placeholder="Ej: 077100001" maxlength="9" inputmode="numeric"
-          autocomplete="off" oninput="updateCounter()" onkeydown="if(event.key==='Enter') comprobar()" />
-        <span class="dcnt" id="digitCount">0 / 9</span>
+      <div>
+        <span class="label">Denominación</span>
+        <div class="dgroup" role="group">
+          <button class="dbtn" id="btn-bs10" onclick="selectDenom('Bs10')">Bs 10</button>
+          <button class="dbtn" id="btn-bs20" onclick="selectDenom('Bs20')">Bs 20</button>
+          <button class="dbtn" id="btn-bs50" onclick="selectDenom('Bs50')">Bs 50</button>
+          <button class="dbtn active" id="btn-todos" onclick="selectDenom('TODOS')">Todas ★</button>
+        </div>
       </div>
 
-      <!-- Scan + Comprobar -->
-      <div class="srow">
-        <button class="bscan" onclick="triggerCamera()">📷 Escanear con cámara</button>
+      <div>
+        <span class="label">Número de Serie</span>
+        <div class="iwrap">
+          <input type="text" id="serialInput" class="sinput" placeholder="Ej: 077100001" maxlength="9" inputmode="numeric" autocomplete="off" oninput="updateCounter()" onkeydown="if(event.key==='Enter') comprobar()" />
+          <span class="dcnt" id="digitCount">0 / 9</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="bscan" onclick="triggerCamera()" title="Escanear con cámara">📷</button>
+        <button class="bcheck" onclick="comprobar()">✦ COMPROBAR ✦</button>
       </div>
       <div class="sstatus" id="scanStatus"></div>
       <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handleCameraImage(event)" />
-
-      <button class="bcheck" onclick="comprobar()">
-        <span>✦ &nbsp;COMPROBAR&nbsp; ✦</span>
-      </button>
     </div>
 
-    <!-- Resultado -->
-    <div class="rbox" id="resultBox" role="alert" aria-live="polite">
+    <div class="rbox" id="resultBox">
       <span class="rsub" id="resultSub"></span>
       <div class="rdetail" id="resultDetail"></div>
     </div>
-
-    <!-- Info strip -->
-    <div class="istrip">
-      <strong>CP9/2026</strong> — BCB, 28/02/2026 · Billetes <strong>Serie B</strong> sin valor legal · Canjéalos en el
-      BCB
-    </div>
+    
+    <div class="istrip">Billetes <strong>Serie B</strong> sin valor legal (CP9/2026)</div>
   </main>
 
-  <!-- FOOTER -->
   <footer>
-    <a class="fbrand" href="https://wa.me/59165620007?text=Excelente%20trabajo!" target="_blank" rel="noopener">MKS</a>
-    <span class="ftext">Verificador Oficial de Billetes Sin Valor Legal — Bolivia 2026</span>
-    <span class="fref">Basado en CP9/2026 del Banco Central de Bolivia · Todos los derechos reservados</span>
+    <a class="fbrand" href="https://wa.me/59165620007" target="_blank">MKS</a>
+    <span class="ftext">Verificador Oficial — Bolivia 2026</span>
   </footer>
 
   <script>
-    // ═══════════════════════════════════════════════════════════
-    //  API KEY GEMINI — Configurada por el entorno 
-    // ═══════════════════════════════════════════════════════════
+    // IMPORTANTE: Pon tu API KEY aquí si usas este archivo en tu servidor o celular.
+    // Si lo usas aquí dentro de Canvas, déjalo vacío, el sistema lo pone por ti.
     const apiKey = ""; 
 
-    // ═══════════════════════════════════════════════════════════
-    //  SERIES INVÁLIDAS Y LÍMITES DE IMPRESIÓN — CP9/2026
-    // ═══════════════════════════════════════════════════════════
-
-    const MAX_PRINTED_SERIALS = {
-      Bs10: 109850000,
-      Bs20: 120950000,
-      Bs50: 92250000
-    };
-
+    const MAX_PRINTED_SERIALS = { Bs10: 109850000, Bs20: 120950000, Bs50: 92250000 };
     const INVALID_RANGES = {
-      Bs50: [
-        [67250001, 67700000], [69050001, 69500000], [69500001, 69950000],
-        [69950001, 70400000], [70400001, 70850000], [70850001, 71300000],
-        [76310012, 85139995], [86400001, 86850000], [90900001, 91350000],
-        [91800001, 92250000]
-      ],
-      Bs20: [
-        [87280145, 91646549], [96650001, 97100000], [99800001, 100250000],
-        [100250001, 100700000], [109250001, 109700000], [110600001, 111050000],
-        [111050001, 111500000], [111950001, 112400000], [112400001, 112850000],
-        [112850001, 113300000], [114200001, 114650000], [114650001, 115100000],
-        [115100001, 115550000], [118700001, 119150000], [119150001, 119600000],
-        [120500001, 120950000]
-      ],
-      Bs10: [
-        [77100001, 77550000], [78000001, 78450000], [78900001, 96350000],
-        [96350001, 96800000], [96800001, 97250000], [98150001, 98600000],
-        [104900001, 105350000], [105350001, 105800000], [106700001, 107150000],
-        [107600001, 108050000], [108050001, 108500000], [109400001, 109850000]
-      ],
+      Bs50: [[67250001, 67700000], [69050001, 69500000], [69500001, 69950000], [69950001, 70400000], [70400001, 70850000], [70850001, 71300000], [76310012, 85139995], [86400001, 86850000], [90900001, 91350000], [91800001, 92250000]],
+      Bs20: [[87280145, 91646549], [96650001, 97100000], [99800001, 100250000], [100250001, 100700000], [109250001, 109700000], [110600001, 111050000], [111050001, 111500000], [111950001, 112400000], [112400001, 112850000], [112850001, 113300000], [114200001, 114650000], [114650001, 115100000], [115100001, 115550000], [118700001, 119150000], [119150001, 119600000], [120500001, 120950000]],
+      Bs10: [[77100001, 77550000], [78000001, 78450000], [78900001, 96350000], [96350001, 96800000], [96800001, 97250000], [98150001, 98600000], [104900001, 105350000], [105350001, 105800000], [106700001, 107150000], [107600001, 108050000], [108050001, 108500000], [109400001, 109850000]],
     };
 
     let selectedDenom = 'TODOS';
@@ -633,7 +280,7 @@
       selectedDenom = d;
       document.querySelectorAll('.dbtn').forEach(b => b.classList.remove('active'));
       document.getElementById({ Bs10: 'btn-bs10', Bs20: 'btn-bs20', Bs50: 'btn-bs50', TODOS: 'btn-todos' }[d]).classList.add('active');
-      hideResult();
+      document.getElementById('resultBox').classList.remove('visible', 'valid', 'invalid', 'warn');
     }
 
     function updateCounter() {
@@ -642,20 +289,13 @@
       document.getElementById('digitCount').textContent = v.length + ' / 9';
     }
 
-    function hideResult() {
-      const b = document.getElementById('resultBox');
-      b.classList.remove('visible', 'valid', 'invalid', 'warn');
-    }
-
     function normalizeSerial(r) { return r.length === 8 ? '0' + r : r }
 
     function checkStatus(s9, denom) {
       const n = parseInt(s9, 10);
       if (n > MAX_PRINTED_SERIALS[denom]) return 'NOT_EXIST';
-      
       const ranges = INVALID_RANGES[denom] || [];
-      const isInv = ranges.some(([f, t]) => n >= f && n <= t);
-      return isInv ? 'INVALID' : 'VALID';
+      return ranges.some(([f, t]) => n >= f && n <= t) ? 'INVALID' : 'VALID';
     }
 
     function comprobar() {
@@ -665,110 +305,73 @@
       const detail = document.getElementById('resultDetail');
 
       if (!raw || !/^\d{8,9}$/.test(raw)) {
-        box.classList.remove('valid', 'warn');
-        box.classList.add('visible', 'invalid');
-        sub.textContent = '⚠️ Ingresa entre 8 y 9 dígitos numéricos.';
+        box.className = 'rbox visible invalid';
+        sub.textContent = '⚠️ Ingresa 8 ó 9 números.';
         detail.classList.remove('show'); detail.innerHTML = '';
         return;
       }
 
       const s9 = normalizeSerial(raw);
-      box.classList.remove('visible', 'valid', 'invalid', 'warn');
-      void box.offsetWidth;
+      box.className = 'rbox'; void box.offsetWidth;
 
-      let denomsToCheck = selectedDenom === 'TODOS' 
-        ? [{ key: 'Bs10', label: 'Bs 10' }, { key: 'Bs20', label: 'Bs 20' }, { key: 'Bs50', label: 'Bs 50' }]
-        : [{ key: selectedDenom, label: selectedDenom.replace('Bs', 'Bs ') }];
+      let denoms = selectedDenom === 'TODOS' 
+        ? [{ k: 'Bs10', l: 'Bs 10' }, { k: 'Bs20', l: 'Bs 20' }, { k: 'Bs50', l: 'Bs 50' }]
+        : [{ k: selectedDenom, l: selectedDenom.replace('Bs', 'Bs ') }];
 
-      let boxStatus = 'valid';
-      if (denomsToCheck.some(d => checkStatus(s9, d.key) === 'INVALID')) {
-        boxStatus = 'invalid';
-      } else if (denomsToCheck.some(d => checkStatus(s9, d.key) === 'NOT_EXIST')) {
-        boxStatus = 'warn'; 
-      }
+      let status = 'valid';
+      if (denoms.some(d => checkStatus(s9, d.k) === 'INVALID')) status = 'invalid';
+      else if (denoms.some(d => checkStatus(s9, d.k) === 'NOT_EXIST')) status = 'warn'; 
 
-      box.classList.add('visible', boxStatus);
-      sub.textContent = selectedDenom === 'TODOS' 
-        ? `Serie ${s9} — Revisado en todas las denominaciones (CP9/2026):`
-        : `Serie ${s9} — Revisión para ${selectedDenom.replace('Bs', 'Bs ')}:`;
+      box.classList.add('visible', status);
+      sub.textContent = `Serie ${s9}`;
 
-      detail.innerHTML = denomsToCheck.map(d => {
-        const status = checkStatus(s9, d.key);
-        let badgeClass = status === 'NOT_EXIST' ? 'warn' : (status === 'INVALID' ? 'bad' : 'ok');
-        let badgeText = status === 'NOT_EXIST' ? '❓ NO EXISTE' : (status === 'INVALID' ? '🚫 INVÁLIDO' : '✅ VÁLIDO');
-
-        return `<div class="drow">
-          <span class="drname">${d.label}</span>
-          <span class="dbadge ${badgeClass}">${badgeText}</span>
-        </div>`;
+      detail.innerHTML = denoms.map(d => {
+        const st = checkStatus(s9, d.k);
+        const [cls, txt] = st === 'NOT_EXIST' ? ['warn','❓ NO EXISTE'] : (st === 'INVALID' ? ['bad','🚫 INVÁLIDO'] : ['ok','✅ VÁLIDO']);
+        return `<div class="drow"><span class="drname">${d.l}</span><span class="dbadge ${cls}">${txt}</span></div>`;
       }).join('');
-      
       detail.classList.add('show');
-      
-      // Permitimos tiempo para el render antes de scrollear hacia los resultados
-      setTimeout(() => {
-        box.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 100);
     }
 
-    /* ── CÁMARA + GEMINI OCR + COMPRESIÓN DE IMAGEN ────────────────────────── */
-    function triggerCamera() {
-      document.getElementById('cameraInput').click();
-    }
+    function triggerCamera() { document.getElementById('cameraInput').click(); }
 
     function showScan(msg, err) {
       const el = document.getElementById('scanStatus');
-      el.textContent = msg;
-      el.style.color = err ? '#E74C3C' : 'var(--gold-l)';
+      el.textContent = msg; el.style.color = err ? '#E74C3C' : 'var(--gold-l)';
       el.classList.add('show');
     }
     
-    function hideScan() { document.getElementById('scanStatus').classList.remove('show') }
+    function hideScan() { document.getElementById('scanStatus').classList.remove('show'); }
 
-    // Función para comprimir la imagen tomada desde la cámara del celular.
-    // Esto evita que fotos de 15MB traben la red o la IA.
-    function compressImage(file, maxWidth = 800, maxHeight = 800) {
+    function compressImage(file, max = 800) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = event => {
+        reader.onload = e => {
           const img = new Image();
-          img.src = event.target.result;
           img.onload = () => {
-            let width = img.width;
-            let height = img.height;
-            if (width > maxWidth || height > maxHeight) {
-              const ratio = Math.min(maxWidth / width, maxHeight / height);
-              width = Math.round(width * ratio);
-              height = Math.round(height * ratio);
+            let w = img.width, h = img.height;
+            if (w > max || h > max) {
+              const r = Math.min(max/w, max/h); w = Math.round(w*r); h = Math.round(h*r);
             }
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-            resolve(dataUrl.split(',')[1]); // Devuelve solo la parte Base64
+            const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+            cv.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(cv.toDataURL('image/jpeg', 0.8).split(',')[1]);
           };
-          img.onerror = error => reject(error);
+          img.onerror = reject; img.src = e.target.result;
         };
-        reader.onerror = error => reject(error);
+        reader.onerror = reject; reader.readAsDataURL(file);
       });
     }
 
-    async function fetchWithRetry(url, options, retries = 5) {
-      const delays = [1000, 2000, 4000, 8000, 16000];
+    async function fetchWithRetry(url, options, retries = 3) {
       for (let i = 0; i < retries; i++) {
         try {
           const res = await fetch(url, options);
-          if (!res.ok) {
-            const e = await res.json().catch(() => ({}));
-            throw new Error(e?.error?.message || `HTTP ${res.status}`);
-          }
+          if (!res.ok) throw new Error(await res.text());
           return await res.json();
         } catch (err) {
           if (i === retries - 1) throw err;
-          await new Promise(r => setTimeout(r, delays[i]));
+          await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i)));
         }
       }
     }
@@ -776,55 +379,42 @@
     async function handleCameraImage(event) {
       const file = event.target.files[0];
       if (!file) return;
-      showScan('⏳ Preparando y Analizando imagen con IA...');
       
+      // Validar que apiKey exista si se corre fuera de este entorno
+      if (!apiKey && window.location.hostname !== "localhost" && !window.location.hostname.includes("google")) {
+         showScan('❌ Falta API Key. Añádela en el código.', true);
+         return;
+      }
+
+      showScan('⏳ Procesando...');
       try {
-        // Comprimimos la imagen primero (Súper importante para móviles)
         const b64 = await compressImage(file);
-        const mime = 'image/jpeg';
-        
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        
         const payload = {
-          contents: [{
-            role: "user",
-            parts: [
-              { text: "Analiza esta imagen de un billete. Encuentra el número de serie. El número de serie debe tener entre 8 y 9 dígitos. Responde ÚNICAMENTE con los números que encuentres, sin espacios, letras ni otro texto. Si encuentras 8 dígitos, devuélvelos igual. Ejemplo de respuesta correcta: 123456789" },
-              { inlineData: { mimeType: mime, data: b64 } }
-            ]
-          }]
+          contents: [{ role: "user", parts: [
+            { text: "Busca un número de serie de 8 o 9 dígitos en este billete. Responde SOLO con el número." },
+            { inlineData: { mimeType: 'image/jpeg', data: b64 } }
+          ]}]
         };
 
-        const data = await fetchWithRetry(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
+        const data = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         const txt = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
-        // Extraemos solo grupos de 8 a 9 números.
         const m = txt.match(/\d{8,9}/);
         
-        if (!m) { 
-          showScan('❌ No pude ver claro el número de serie. Por favor, acércate más y evita el brillo.', true); 
-          return; 
-        }
+        if (!m) { showScan('❌ No detectado. Intenta de nuevo.', true); return; }
         
         const serial = m[0].length === 8 ? '0' + m[0] : m[0];
         document.getElementById('serialInput').value = serial;
-        document.getElementById('digitCount').textContent = serial.length + ' / 9';
-        showScan(`✅ Serie detectada: ${serial}`);
-        
-        // Ejecutar comprobación automáticamente
-        setTimeout(() => { comprobar(); hideScan() }, 700);
+        updateCounter();
+        showScan(`✅ Serie: ${serial}`);
+        setTimeout(() => { comprobar(); hideScan(); }, 600);
       } catch (e) {
-        showScan('❌ Hubo un error procesando la imagen: ' + e.message, true);
+        showScan('❌ Error de API. Revisa tu API Key.', true);
+        console.error(e);
       } finally {
-        // Limpiamos el input file para permitir escanear de nuevo
         document.getElementById('cameraInput').value = '';
       }
     }
   </script>
 </body>
-
 </html>
